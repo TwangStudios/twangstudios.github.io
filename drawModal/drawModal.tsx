@@ -3,7 +3,6 @@ import ReactModal from "react-modal";
 import './drawModal';
 import CanvasDraw from "react-canvas-draw";
 import * as uuid from "uuid";
-import useLocalStorage from "use-local-storage";
 
 ReactModal.setAppElement('body');
 
@@ -20,30 +19,39 @@ const modalStyle = {
 
 export default function DrawModal({id:editId}:ItemId) {
     
-    const [id, setId] = useState<string>(uuid.v4())
     const [modalIsOpen, setIsOpen] = useState(false);
-    const [name, setName] = useState<string>('');
-    const [item, setItem] = useLocalStorage<ItemProps>(id, {name, image: undefined});
+    const [id, setId] = useState<string>(uuid.v4());
+    const [name, setName] = useState('');
+    const [imageInit, setImageInit] = useState<string|undefined>()
     const canvas = useRef<CanvasDraw>(null);
-    debugger;
 
     function openModal() {
         setIsOpen(true);
-        setId( editId || uuid.v4() );
-        setName('');
-        setItem(undefined);
+        debugger;
+
+        if(editId) {
+            setId(editId)
+            const storage = localStorage.getItem(editId) || '{"name":""}';
+            const parsed = JSON.parse(storage);
+            setName(parsed.name)
+            setImageInit(parsed.image)
+        } else {
+            setId(uuid.v4())
+        }
     }
 
     function closeModal() {
         setIsOpen(false);
+        setId(uuid.v4());
     }
 
     function save() {
+        debugger
         if(!canvas.current) {
             return closeModal();
         }
         const image = canvas.current.getSaveData();
-        setItem({name, image})
+        localStorage.setItem(id, JSON.stringify({name, image}))
         closeModal();
     }
 
@@ -54,7 +62,7 @@ export default function DrawModal({id:editId}:ItemId) {
                 isOpen={modalIsOpen}
                 contentLabel="Minimal Modal Example"
             >
-                <CanvasDraw ref={canvas} saveData={item?.image}/>
+                <CanvasDraw ref={canvas} saveData={imageInit}/>
                 <button onClick={closeModal}>close</button>
                 <div>I am a modal</div>
                 <input placeholder={name || "What's the item called?"} onBlur={(e) => setName(e.target.value)} />
