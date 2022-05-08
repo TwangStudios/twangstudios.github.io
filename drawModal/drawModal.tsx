@@ -24,6 +24,7 @@ export default function DrawModal({id:editId, onSave}: ItemId & SaveAction) {
     const [modalIsOpen, setIsOpen] = useState(false);
     const [id, setId] = useState<string>(uuid.v4());
     const [name, setName] = useState('New Item');
+    const [description, setDescription] = useState('');
     const [imageInit, setImageInit] = useState<string|undefined>()
     const canvas = useRef<CanvasDraw>(null);
 
@@ -37,6 +38,7 @@ export default function DrawModal({id:editId, onSave}: ItemId & SaveAction) {
             const parsed = JSON.parse(storage);
             setName(parsed.name)
             setImageInit(parsed.image)
+            setDescription(parsed.description)
         } else {
             setId(uuid.v4())
         }
@@ -53,7 +55,7 @@ export default function DrawModal({id:editId, onSave}: ItemId & SaveAction) {
             return closeModal();
         }
         const image = canvas.current.getSaveData();
-        localStorage.setItem(id, JSON.stringify({name, image}))
+        localStorage.setItem(id, JSON.stringify({name, image, description}))
         closeModal();
         if(onSave) onSave();
     }
@@ -75,7 +77,7 @@ export default function DrawModal({id:editId, onSave}: ItemId & SaveAction) {
                 <CanvasDraw ref={canvas} saveData={imageInit}/>
                 <input placeholder={name || "What's the item called?"} onBlur={(e) => checkName(e.target.value)}/>
                 <br/>
-                <textarea placeholder={"Item Description"}/>
+                <textarea placeholder={description||"Item Description"} onBlur={(e) => setDescription(e.target.value)}/>
                 <br/>
                 <button onClick={save}>Save</button>
                 <button onClick={closeModal}>Cancel</button>
