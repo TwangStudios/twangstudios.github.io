@@ -5,6 +5,7 @@ import DrawModal from './drawModal/drawModal';
 import Select from 'react-select';
 
 export default function App() {
+  const [items, setItems] = useState(getItems())
   const [selectedOption, setSelectedOption] = useState<string|undefined>(undefined);
 
 
@@ -20,8 +21,9 @@ export default function App() {
 
     return archive;
 }
-
-  const items = getItems();
+  const onSave = () => {
+    setItems(getItems());
+  }
 
   return (
     <View style={styles.container}>
@@ -32,7 +34,7 @@ export default function App() {
         options={items}
         onChange={(item) => setSelectedOption(item?.value)}
       />
-      <DrawModal id={selectedOption}/>
+      <DrawModal id={selectedOption} onSave={onSave} />
     </View>
   );
 }

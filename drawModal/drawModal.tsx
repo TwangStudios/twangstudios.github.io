@@ -17,7 +17,8 @@ const modalStyle = {
     },
 };
 
-export default function DrawModal({id:editId}:ItemId) {
+type SaveAction = {onSave: VoidFunction};
+export default function DrawModal({id:editId, onSave}: ItemId & SaveAction) {
     
     const [modalIsOpen, setIsOpen] = useState(false);
     const [id, setId] = useState<string>(uuid.v4());
@@ -53,6 +54,7 @@ export default function DrawModal({id:editId}:ItemId) {
         const image = canvas.current.getSaveData();
         localStorage.setItem(id, JSON.stringify({name, image}))
         closeModal();
+        if(onSave) onSave();
     }
     
     function checkName(name: string){
