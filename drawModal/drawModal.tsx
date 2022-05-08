@@ -65,7 +65,7 @@ export default function DrawModal({id:editId}:ItemId) {
                 <CanvasDraw ref={canvas} saveData={imageInit}/>
                 <button onClick={closeModal}>close</button>
                 <div>I am a modal</div>
-                <input placeholder={name || "What's the item called?"} onBlur={(e) => setName(e.target.value)} />
+                <input placeholder={name || "What's the item called?"} onBlur={(e) => setName(e.target.value)} required/>
                 <button onClick={save}>Save</button>
                 <button onClick={closeModal}>Cancel</button>
             </ReactModal>
