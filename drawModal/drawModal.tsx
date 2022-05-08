@@ -21,7 +21,7 @@ export default function DrawModal({id:editId}:ItemId) {
     
     const [modalIsOpen, setIsOpen] = useState(false);
     const [id, setId] = useState<string>(uuid.v4());
-    const [name, setName] = useState('');
+    const [name, setName] = useState('New Item');
     const [imageInit, setImageInit] = useState<string|undefined>()
     const canvas = useRef<CanvasDraw>(null);
 
