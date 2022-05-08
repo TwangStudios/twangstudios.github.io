@@ -32,7 +32,7 @@ export default function App() {
         options={items}
         onChange={(item) => setSelectedOption(item?.value)}
       />
-      <DrawModal />
+      <DrawModal id={selectedOption}/>
     </View>
   );
 }
