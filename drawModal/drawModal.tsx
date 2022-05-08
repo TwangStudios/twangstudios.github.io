@@ -54,6 +54,11 @@ export default function DrawModal({id:editId}:ItemId) {
         localStorage.setItem(id, JSON.stringify({name, image}))
         closeModal();
     }
+    
+    function checkName(name: string){
+        if (name==""){setName("Unnamed item")}
+        else {setName(name)}
+    }
 
     return (
         <div>
@@ -64,8 +69,7 @@ export default function DrawModal({id:editId}:ItemId) {
             >
                 <CanvasDraw ref={canvas} saveData={imageInit}/>
                 <button onClick={closeModal}>close</button>
-                <div>I am a modal</div>
-                <input placeholder={name || "What's the item called?"} onBlur={(e) => setName(e.target.value)} required/>
+                <input placeholder={name || "What's the item called?"} onBlur={(e) => checkName(e.target.value)}/>
                 <button onClick={save}>Save</button>
                 <button onClick={closeModal}>Cancel</button>
             </ReactModal>
