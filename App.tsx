@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView} from 'react-native';
 import React, { useState } from 'react';
 import DrawModal from './drawModal/drawModal';
 import Select from 'react-select';
@@ -16,7 +16,7 @@ export default function App() {
         i = 0, key;
 
     for (; key = keys[i]; i++) {
-        archive.push({value: key, label: JSON.parse(localStorage.getItem(key)!).name});
+        archive.push({id: key, name: JSON.parse(localStorage.getItem(key)!).name});
     }
 
     return archive;
@@ -26,15 +26,32 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text>ZingBong</Text>
-      <Text>🍺 Cheers!</Text>
-      <StatusBar style="auto" />
-      <Select 
-        options={items}
-        onChange={(item) => setSelectedOption(item?.value)}
-      />
-      <DrawModal id={selectedOption} onSave={onSave} />
+    <View style={styles.backgroundMain}>
+      <View style={styles.container} >
+        <Text style={styles.textLight}>ZingBong</Text>
+        <View style={{flexDirection:'row', }}>
+          <TouchableOpacity style={styles.buttons}>
+            <Text style={styles.textDark}>New Item</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttons}>
+            <Text style={styles.textDark}>New Character</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView>
+          {items.map((item) => {
+            return (
+              <TouchableOpacity style={styles.itemContainer}>
+                <Text style={styles.textDark}>{item.name}</Text>
+              </TouchableOpacity>
+            )
+          })}
+                  
+        </ScrollView>
+        
+
+        <DrawModal id={selectedOption} onSave={onSave} />
+      </View>
+      <View style={styles.backgroundEditItem} />
     </View>
   );
 }
@@ -42,8 +59,51 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    position: 'relative',
+    marginLeft: 20,
+    marginRight: 10,
+    marginVertical: 20,
+    backgroundColor:'#593F62',
+    width: '67%',
+    borderRadius:10
+    
   },
+  backgroundMain: {
+    backgroundColor: '#8499B1',
+    flex:1,
+    flexDirection: 'row'
+  },
+  backgroundEditItem: {
+    backgroundColor: '#7B6D8D',
+    marginRight: 20,
+    marginLeft: 10,
+    marginVertical:20,
+    width: '33%',
+    borderRadius: 10
+
+  },
+  textLight: {
+    color: '#DBDBDB',
+    margin: 10,
+  },
+  textDark: {
+    color: '#272727',
+    margin: 10,
+  },
+  buttons: {
+    backgroundColor: '#8499B1',
+    margin: 20,
+    borderRadius: 5,
+    borderColor: '#36151E',
+    borderWidth: 3,
+  },
+  itemContainer: {
+    backgroundColor: '#7B6D8D',
+    margin: 10,
+    borderRadius: 5,
+    flexDirection: 'row',
+  }
+
 });
