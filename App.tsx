@@ -26,15 +26,18 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text>ZingBong</Text>
-      <Text>🍺 Cheers!</Text>
-      <StatusBar style="auto" />
-      <Select 
-        options={items}
-        onChange={(item) => setSelectedOption(item?.value)}
-      />
-      <DrawModal id={selectedOption} onSave={onSave} />
+    <View style={styles.backgroundMain}>
+      <View style={styles.container} >
+        <Text style={styles.text}>ZingBong</Text>
+        <Text style={styles.text}>🍺 Cheers!</Text>
+        <StatusBar/>
+        <Select 
+          options={items}
+          onChange={(item) => setSelectedOption(item?.value)}
+        />
+        <DrawModal id={selectedOption} onSave={onSave} />
+      </View>
+      <View style={styles.backgroundModal} />
     </View>
   );
 }
@@ -42,8 +45,33 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
+    position: 'relative',
+    marginLeft: 20,
+    marginRight: 10,
+    marginVertical: 20,
+    backgroundColor:'#36151E',
+    width: '67%',
+    borderRadius:10
+    
   },
+  backgroundMain: {
+    backgroundColor: '#8499B1',
+    flex:1,
+    flexDirection: 'row'
+  },
+  backgroundModal: {
+    backgroundColor: '#36151E',
+    marginRight: 20,
+    marginLeft: 10,
+    marginVertical:20,
+    width: '33%',
+    borderRadius: 10
+
+  },
+  text: {
+    color: '#DBDBDB',
+    margin: 10,
+  }
 });
