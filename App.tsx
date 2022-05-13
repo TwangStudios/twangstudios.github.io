@@ -3,10 +3,11 @@ import { StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import DrawModal from './drawModal/drawModal';
 import Select from 'react-select';
+import * as uuid from 'uuid';
 
 export default function App() {
   const [items, setItems] = useState(getItems())
-  const [selectedOption, setSelectedOption] = useState<string|undefined>(undefined);
+  const [selectedOption, setSelectedOption] = useState<string>(items.at(0)?.label);
 
 
   function getItems() {
@@ -17,6 +18,17 @@ export default function App() {
 
     for (; key = keys[i]; i++) {
         archive.push({value: key, label: JSON.parse(localStorage.getItem(key)!).name});
+    }
+
+    if(archive.length == 0){
+      localStorage.setItem(uuid.v4(), JSON.stringify({
+        name: "New Item",
+        isBag: false,
+        image: "",
+        description: "",
+        weight: 0,
+        cost: 0,
+      }))
     }
 
     return archive;
