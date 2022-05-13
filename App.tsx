@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image} from 'react-native';
 import React, { useState } from 'react';
 import DrawModal from './drawModal/drawModal';
 import Select from 'react-select';
+import CanvasDraw from 'react-canvas-draw';
 
 export default function App() {
   const [items, setItems] = useState(getItems())
@@ -16,7 +17,10 @@ export default function App() {
         i = 0, key;
 
     for (; key = keys[i]; i++) {
-        archive.push({id: key, name: JSON.parse(localStorage.getItem(key)!).name});
+        archive.push({id: key, 
+                      name: JSON.parse(localStorage.getItem(key)!).name, 
+                      image: JSON.parse(localStorage.getItem(key)!).image
+                    });
     }
 
     return archive;
@@ -26,7 +30,7 @@ export default function App() {
   }
 
   return (
-    <View style={styles.backgroundMain}>
+    <View style={styles.backgroundMain} >
       <View style={styles.container} >
         <Text style={styles.textLight}>ZingBong</Text>
         <View style={{flexDirection:'row', }}>
@@ -40,15 +44,18 @@ export default function App() {
         <ScrollView>
           {items.map((item) => {
             return (
-              <TouchableOpacity style={styles.itemContainer}>
+              <TouchableOpacity style={styles.itemContainer} >
+                <CanvasDraw disabled
+                            hideGrid
+                            saveData={item.image} 
+                            immediateLoading
+                             />
                 <Text style={styles.textDark}>{item.name}</Text>
               </TouchableOpacity>
             )
           })}
                   
         </ScrollView>
-        
-
         <DrawModal id={selectedOption} onSave={onSave} />
       </View>
       <View style={styles.backgroundEditItem} />
@@ -73,7 +80,8 @@ const styles = StyleSheet.create({
   backgroundMain: {
     backgroundColor: '#8499B1',
     flex:1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    height: '100%'
   },
   backgroundEditItem: {
     backgroundColor: '#7B6D8D',
@@ -104,6 +112,11 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     flexDirection: 'row',
-  }
+  },
+  itemIcon: {
+    width: 50,
+    height: 50,
+    marginHorizontal: 5,
+  },
 
 });
