@@ -1,7 +1,10 @@
-type ItemId = {id?: string}
+type ItemId = {id: string}
 type ItemProps = {
     name: string,
-    image?: string,
-    description?: string,
+    isBag: boolean,
+    image: string,
+    description: string,
+    weight: number,
+    cost: number,
 }
 type Item = ItemId & ItemProps;
