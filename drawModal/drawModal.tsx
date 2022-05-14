@@ -1,88 +1,77 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactModal from "react-modal";
 import './drawModal';
 import CanvasDraw from "react-canvas-draw";
-import * as uuid from "uuid";
-import '../styles.tsx';
+import { StyleSheet, View } from "react-native"
+import { TextInput } from "react-native";
 
 ReactModal.setAppElement('body');
 
-const modalStyle = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-    
-    },
-};
+type SaveAction = {onSave: VoidFunction}
+export default function DrawModal({id, onSave}: ItemId & SaveAction) {
 
-type SaveAction = {onSave: VoidFunction};
-export default function DrawModal({id:editId, onSave}: ItemId & SaveAction) {
-    
-    const [modalIsOpen, setIsOpen] = useState(false);
-    const [id, setId] = useState<string>(uuid.v4());
-    const [name, setName] = useState('New Item');
-    const [description, setDescription] = useState('');
-    const [imageInit, setImageInit] = useState<string|undefined>()
+    const [name, setName] = useState("")
+    const [isBag, setIsBag] = useState(false);
+    const [description, setDescription] = useState("");
+    const [image, setImage]  = useState("");
+    const [weight, setWeight] = useState(0);
+    const [cost, setCost] = useState(0);
     const canvas = useRef<CanvasDraw>(null);
 
-    function openModal() {
-        setIsOpen(true);
-        debugger;
-
-        if(editId) {
-            setId(editId)
-            const storage = localStorage.getItem(editId) || '{"name":""}';
-            const parsed = JSON.parse(storage);
-            setName(parsed.name)
-            setImageInit(parsed.image)
-            setDescription(parsed.description)
-        } else {
-            setId(uuid.v4())
+    // When the id changes, we set the information onto our component
+    useEffect(() => {
+        const stored = localStorage.getItem(id);
+        if(!stored) {
+            console.error('item {} could not be found in local storage', id);
+            return;
         }
-    }
-
-    function closeModal() {
-        setIsOpen(false);
-        setId(uuid.v4());
-    }
+        const parsed = JSON.parse(stored);
+        setName(parsed.name || "");
+        setIsBag(parsed.isBag || false);
+        setDescription(parsed.description || "");
+        setWeight(parsed.weight || 0);
+        setCost(parsed.cost || 0);
+        if(!canvas.current) {
+            return;
+        }
+        canvas.current.loadSaveData(parsed.image || "", true);
+    }, [id])
 
     function save() {
-        debugger
-        if(!canvas.current) {
-            return closeModal();
-        }
-        const image = canvas.current.getSaveData();
-        localStorage.setItem(id, JSON.stringify({name, image, description}))
-        closeModal();
-        if(onSave) onSave();
-    }
-    
-    function checkName(name: string){
-        if (name==""){setName("Unnamed item")}
-        else {setName(name)}
+        localStorage.setItem(id, JSON.stringify({
+            name,
+            isBag,
+            image,
+            description,
+            weight,
+            cost,
+        }))
+        return onSave();
     }
 
     return (
-        <div>
-            <button onClick={openModal}>Open Modal</button>
-            <ReactModal
-                isOpen={modalIsOpen}
-                contentLabel="Minimal Modal Example"
+        <View style={styles.content}>
+            <CanvasDraw ref={canvas} onChange={(canvas) => setImage(canvas.getSaveData)} />
+            <TextInput value={name} onChangeText={setName} placeholder="Your item's name" />
+            <TextInput  value={description} onChangeText={setDescription} placeholder="Your item's description" multiline numberOfLines={4} />
+            <TextInput  value={cost.toString()} onChangeText={(text) => setCost(Number(text))} placeholder="How much is this worth?" keyboardType="numeric"/>
+            <TextInput  value={weight.toString()} onChangeText={(text) => setWeight(Number(text))} placeholder="How much dose this weigh?" keyboardType="numeric"/>
+            <label>
+                <input type="checkbox" checked={isBag} onChange={setIsBag} />
+                Is bag?
+            </label>
+            <button
+                onClick={save}
+                disabled={!name}
             >
-                <button onClick={closeModal}>close</button>
-                <br/>
-                <CanvasDraw ref={canvas} saveData={imageInit}/>
-                <input placeholder={name || "What's the item called?"} onBlur={(e) => checkName(e.target.value)}/>
-                <br/>
-                <textarea placeholder={description||"Item Description"} onBlur={(e) => setDescription(e.target.value)}/>
-                <br/>
-                <button onClick={save}>Save</button>
-                <button onClick={closeModal}>Cancel</button>
-            </ReactModal>
-        </div>
+                Save
+            </button>
+        </View>
     )
 }
+
+const styles = StyleSheet.create({
+    content: {
+          flexDirection: 'column',
+      },
+  })

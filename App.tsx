@@ -11,26 +11,51 @@ import tbdark from './assets/TheBaggerDark.png';
 
 
 
-export default function App() {
-  const [items, setItems] = useState(getItems())
-  const [selectedOption, setSelectedOption] = useState<string|undefined>(undefined);
+const getItems:()=>{id: string, name: string}[] = () => {
+  var archive = [],
+      keys = Object.keys(localStorage),
+      i = 0, key;
 
-
-  function getItems() {
-
-    var archive = [],
-        keys = Object.keys(localStorage),
-        i = 0, key;
-
-    for (; key = keys[i]; i++) {
+  for (; key = keys[i]; i++) {
         archive.push({id: key, 
                       name: JSON.parse(localStorage.getItem(key)!).name, 
                       image: JSON.parse(localStorage.getItem(key)!).image
                     });
     }
 
-    return archive;
+  if(archive.length == 0){
+    localStorage.setItem(uuid.v4(), JSON.stringify({
+      name: "New Item",
+      isBag: false,
+      image: "",
+      description: "",
+      weight: 0,
+      cost: 0,
+    }))
+    archive = getItems();
   }
+    return archive;
+}
+
+export default function App() {
+  const [items, setItems] = useState(getItems())
+  const [selectedOption, setSelectedOption] = useState<string>(items.at(0)!.name);
+  
+  const makeNewItem = () => {
+    const id = uuid.v4()
+    localStorage.setItem(id, JSON.stringify({
+      name: "New Item",
+      isBag: false,
+      image: "",
+      description: "",
+      weight: 0,
+      cost: 0,
+    }))
+
+    setItems(getItems);
+    setSelectedOption(id)
+  }
+  
   const onSave = () => {
     setItems(getItems());
   }
@@ -45,7 +70,7 @@ export default function App() {
         </View>
         <View style={{flexDirection:'row', }}>
           <TouchableOpacity style={styles.buttons}>
-            <Text style={styles.textDark}>New Item</Text>
+            <Text style={styles.textDark} onPress={makeNewItem}>New Item</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttons}>
             <Text style={styles.textDark}>New Character</Text>
