@@ -4,6 +4,7 @@ import './drawModal';
 import CanvasDraw from "react-canvas-draw";
 import { StyleSheet, View } from "react-native"
 import { TextInput } from "react-native";
+import * as styles from '../styles' ;
 
 ReactModal.setAppElement('body');
 
@@ -50,12 +51,40 @@ export default function DrawModal({id, onSave}: ItemId & SaveAction) {
     }
 
     return (
-        <View style={styles.content}>
-            <CanvasDraw ref={canvas} onChange={(canvas) => setImage(canvas.getSaveData)} />
-            <TextInput value={name} onChangeText={setName} placeholder="Your item's name" />
-            <TextInput  value={description} onChangeText={setDescription} placeholder="Your item's description" multiline numberOfLines={4} />
-            <TextInput  value={cost.toString()} onChangeText={(text) => setCost(Number(text))} placeholder="How much is this worth?" keyboardType="numeric"/>
-            <TextInput  value={weight.toString()} onChangeText={(text) => setWeight(Number(text))} placeholder="How much dose this weigh?" keyboardType="numeric"/>
+        <View style={styles.styles.contentEditor}>
+            <View style={{marginVertical:2}}>
+                <CanvasDraw ref={canvas} 
+                            onChange={(canvas) => setImage(canvas.getSaveData)} />
+            </View>
+            <View style={styles.styles.textInputContainerMed}>
+                <TextInput value={name} 
+                            onChangeText={setName} 
+                            placeholder="Your item's name" 
+                            style={styles.styles.textInput}/>
+            </View>
+            
+            <View style={styles.styles.textInputContainer}>
+                <TextInput  value={description} 
+                            onChangeText={setDescription} 
+                            placeholder="Your item's description" 
+                            multiline numberOfLines={4} 
+                            style={styles.styles.textInput}/>
+            </View>
+            <View style={styles.styles.textInputContainerShort}>
+                <TextInput  value={cost.toString()} 
+                            onChangeText={(text) => setCost(Number(text))} 
+                            placeholder="How much is this worth?" 
+                            keyboardType="numeric"
+                            style={styles.styles.textInputShort}/>
+            </View>
+            <View style={styles.styles.textInputContainerShort}>
+                <TextInput  value={weight.toString()} 
+                            onChangeText={(text) => setWeight(Number(text))} 
+                            placeholder="How much dose this weigh?" 
+                            keyboardType="numeric"
+                            style={styles.styles.textInputShort}/>
+            </View>
+            
             <label>
                 <input type="checkbox" checked={isBag} onChange={setIsBag} />
                 Is bag?
@@ -69,9 +98,3 @@ export default function DrawModal({id, onSave}: ItemId & SaveAction) {
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    content: {
-          flexDirection: 'column',
-      },
-  })

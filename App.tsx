@@ -9,10 +9,11 @@ import tslogo from './assets/TwangStudios.png';
 import tblight from './assets/TheBaggerLight.png';
 import tbdark from './assets/TheBaggerDark.png';
 import * as uuid from 'uuid';
+import * as styles from './styles' ;
 
 
 
-const getItems:()=>{id: string, name: string}[] = () => {
+const getItems:()=>{id: string, name: string, image: string}[] = () => {
   var archive = [],
       keys = Object.keys(localStorage),
       i = 0, key;
@@ -61,116 +62,49 @@ export default function App() {
     setItems(getItems());
   }
 
-  return (
-    <SafeAreaView style={styles.backgroundMain} >
-      <View style={styles.container}>
+  return ( 
+    <SafeAreaView style={styles.styles.backgroundMain} >
+      <View style={styles.styles.containerMain}>
         <View style={{flexDirection:'row'}}>
-          <Image source={{uri:tblight}} style={styles.tblogo} />
+          <Image source={{uri:tblight}} style={styles.styles.tblogo} />
             
-            <Text style={styles.textLight}> The TTRPG Inventory Manager</Text>
+            <Text style={styles.styles.textLight}> The TTRPG Party Inventory Manager</Text>
         </View>
         <View style={{flexDirection:'row', }}>
-          <TouchableOpacity style={styles.buttons}>
-            <Text style={styles.textDark} onPress={makeNewItem}>New Item</Text>
+          <TouchableOpacity style={styles.styles.buttons}>
+            <Text style={styles.styles.textDark} onPress={makeNewItem}>New Item</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttons}>
-            <Text style={styles.textDark}>New Character</Text>
+          <TouchableOpacity style={styles.styles.buttons}>
+            <Text style={styles.styles.textDark}>New Character</Text>
           </TouchableOpacity>
         </View>
         <ScrollView>
           {items.map((item) => {
             return (
-              <TouchableOpacity style={styles.itemContainer} >
+              <TouchableOpacity style={styles.styles.itemContainer} >
                 <CanvasDraw 
                             disabled
                             hideGrid
                             saveData={item.image} 
                             immediateLoading
-                            style={{zoom:'25%'}}
+                            style={{zoom:'15x%'}}
                              />
-                <Text style={styles.textDark}>{item.name}</Text>
+                <Text style={styles.styles.textDark}>{item.name}</Text>
               </TouchableOpacity>
             )
           })}
                   
         </ScrollView>
       </View>
-      <View style={styles.backgroundEditItem}>
-        <View style={{alignItems:'flex-end'}}>
-          <Image source={{uri:tslogo}} style={styles.tslogo} />
+      <View style={styles.styles.backgroundEditItem}>
+        <View style={{alignItems:'flex-end'}} >
+          <Image source={{uri:tslogo}} style={styles.styles.tslogo} />
         </View>
-        <DrawModal id={selectedOption} onSave={onSave} />
+        <View style={{alignItems:'center'}}>
+          <DrawModal id={selectedOption} onSave={onSave} />
+        </View>
       </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    position: 'relative',
-    marginLeft: 20,
-    marginRight: 10,
-    marginVertical: 20,
-    backgroundColor:'#593F62',
-    width: '67%',
-    borderRadius:10,
-    
-  },
-  backgroundMain: {
-    backgroundColor: '#8499B1',
-    flex:1,
-    flexDirection: 'row',
-    height: '100%'
-  },
-  backgroundEditItem: {
-    backgroundColor: '#593F62',
-    marginRight: 20,
-    marginLeft: 10,
-    marginVertical:20,
-    width: '33%',
-    borderRadius: 10,
-
-  },
-  textLight: {
-    color: '#DBDBDB',
-    margin: 10,
-  },
-  textDark: {
-    color: '#272727',
-    margin: 10,
-  },
-  buttons: {
-    backgroundColor: '#8499B1',
-    margin: 20,
-    borderRadius: 5,
-    borderColor: '#36151E',
-    borderWidth: 3,
-  },
-  itemContainer: {
-    backgroundColor: '#7B6D8D',
-    margin: 10,
-    borderRadius: 5,
-    flexDirection: 'row',
-    padding: 5,
-
-  },
-  itemIcon: {
-    canvasWidth: '50%',
-    canvasHeight: '50%',
-    marginHorizontal: 5,
-  },
-  tslogo:{
-    height: 200,
-    width: 200,
-    alignItems: 'flex-end'
-  },
-  tblogo:{
-    height: 200,
-    width: 300,
-    padding: 5,
-  },
-
-});
