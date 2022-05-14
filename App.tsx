@@ -1,10 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, SafeAreaView} from 'react-native';
 import React, { useState } from 'react';
 import DrawModal from './drawModal/drawModal';
 import Select from 'react-select';
+import CanvasDraw  from 'react-canvas-draw';
+import Canvas from 'react-native-canvas';
+import tslogo from './assets/TwangStudios.png';
+import tblight from './assets/TheBaggerLight.png';
+import tbdark from './assets/TheBaggerDark.png';
 import * as uuid from 'uuid';
-import CanvasDraw from 'react-canvas-draw';
+
+
 
 const getItems:()=>{id: string, name: string}[] = () => {
   var archive = [],
@@ -56,9 +62,13 @@ export default function App() {
   }
 
   return (
-    <View style={styles.backgroundMain} >
-      <View style={styles.container} >
-        <Text style={styles.textLight}>ZingBong</Text>
+    <SafeAreaView style={styles.backgroundMain} >
+      <View style={styles.container}>
+        <View style={{flexDirection:'row'}}>
+          <Image source={{uri:tblight}} style={styles.tblogo} />
+            
+            <Text style={styles.textLight}> The TTRPG Inventory Manager</Text>
+        </View>
         <View style={{flexDirection:'row', }}>
           <TouchableOpacity style={styles.buttons}>
             <Text style={styles.textDark} onPress={makeNewItem}>New Item</Text>
@@ -71,10 +81,12 @@ export default function App() {
           {items.map((item) => {
             return (
               <TouchableOpacity style={styles.itemContainer} >
-                <CanvasDraw disabled
+                <CanvasDraw 
+                            disabled
                             hideGrid
                             saveData={item.image} 
                             immediateLoading
+                            style={{zoom:'25%'}}
                              />
                 <Text style={styles.textDark}>{item.name}</Text>
               </TouchableOpacity>
@@ -83,10 +95,13 @@ export default function App() {
                   
         </ScrollView>
       </View>
-      <View style={styles.backgroundEditItem} >
-          <DrawModal id={selectedOption} onSave={onSave} />
+      <View style={styles.backgroundEditItem}>
+        <View style={{alignItems:'flex-end'}}>
+          <Image source={{uri:tslogo}} style={styles.tslogo} />
+        </View>
+        <DrawModal id={selectedOption} onSave={onSave} />
       </View>
-</View>
+    </SafeAreaView>
   );
 }
 
@@ -101,7 +116,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     backgroundColor:'#593F62',
     width: '67%',
-    borderRadius:10
+    borderRadius:10,
     
   },
   backgroundMain: {
@@ -111,12 +126,12 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   backgroundEditItem: {
-    backgroundColor: '#7B6D8D',
+    backgroundColor: '#593F62',
     marginRight: 20,
     marginLeft: 10,
     marginVertical:20,
     width: '33%',
-    borderRadius: 10
+    borderRadius: 10,
 
   },
   textLight: {
@@ -139,11 +154,23 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
     flexDirection: 'row',
+    padding: 5,
+
   },
   itemIcon: {
-    width: 50,
-    height: 50,
+    canvasWidth: '50%',
+    canvasHeight: '50%',
     marginHorizontal: 5,
+  },
+  tslogo:{
+    height: 200,
+    width: 200,
+    alignItems: 'flex-end'
+  },
+  tblogo:{
+    height: 200,
+    width: 300,
+    padding: 5,
   },
 
 });
