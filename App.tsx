@@ -6,7 +6,6 @@ import Select from 'react-select';
 import * as uuid from 'uuid';
 
 const getItems:()=>{id: string, name: string}[] = () => {
-
   var archive = [],
       keys = Object.keys(localStorage),
       i = 0, key;
@@ -26,8 +25,7 @@ const getItems:()=>{id: string, name: string}[] = () => {
     }))
     archive = getItems();
   }
-
-  return archive;
+    return archive;
 }
 
 export default function App() {
