@@ -1,10 +1,12 @@
-const defualtCanvas = {
-    content: {
-    width: '85%',
-    height: '85%',
-    }
-}
+import { StyleSheet } from "react-native"
 
-const myStyle = {
-    
-}
+const styles = StyleSheet.create({
+  content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        flexDirection: 'column',
+    },
+})
