@@ -11,51 +11,68 @@ import tbdark from './assets/TheBaggerDark.png';
 import * as uuid from 'uuid';
 import * as styles from './styles' ;
 
+const addItemToChar = (id: string, char: string|null) => {
+  const charName = char ? char : 'NOONE';
+  if(!Object.keys(localStorage).includes(char ? char : 'NOONE')){
+    localStorage.setItem(charName, JSON.stringify({items:[]}))
+  }
+  const {items} = JSON.parse(localStorage.getItem(charName)!)
+  
+  items.push(id)
+  localStorage.setItem(charName, items)
+  return;
+}
 
-
-const getItems:()=>{id: string, name: string, image: string}[] = () => {
+const getItems:()=>{id: string, name: string, image: string|undefined}[] = () => {
   var archive = [],
-      keys = Object.keys(localStorage),
-      i = 0, key;
-
+  keys = Object.keys(localStorage),
+  i = 0, key;
+  
   for (; key = keys[i]; i++) {
-        archive.push({id: key, 
-                      name: JSON.parse(localStorage.getItem(key)!).name, 
-                      image: JSON.parse(localStorage.getItem(key)!).image
-                    });
+    const stored = localStorage.getItem(key)
+    if(!stored) {
+      console.error('item {} could not be found in local storage', key);
     }
-
+    const parsed = JSON.parse(stored!);
+    archive.push({
+      id: key,
+      name: parsed.name, 
+      image: parsed.image,
+  });
+  }
+  
   if(archive.length == 0){
     localStorage.setItem(uuid.v4(), JSON.stringify({
       name: "New Item",
       isBag: false,
-      image: "",
+      image: undefined,
       description: "",
       weight: 0,
       cost: 0,
     }))
     archive = getItems();
   }
-    return archive;
+  return archive;
 }
 
 export default function App() {
   const [items, setItems] = useState(getItems())
-  const [selectedOption, setSelectedOption] = useState<string>(items.at(0)!.name);
+  const [selectedOption, setSelectedOption] = useState<string>(items.at(0)!.id);
   
   const makeNewItem = () => {
     const id = uuid.v4()
     localStorage.setItem(id, JSON.stringify({
       name: "New Item",
       isBag: false,
-      image: "",
+      image: undefined,
       description: "",
       weight: 0,
       cost: 0,
     }))
-
+    
     setItems(getItems);
-    setSelectedOption(id)
+    setSelectedOption(id);
+    addItemToChar(id, null);
   }
   
   const onSave = () => {
@@ -80,14 +97,15 @@ export default function App() {
         </View>
         <ScrollView>
           {items.map((item) => {
+            console.log(item)
             return (
-              <TouchableOpacity style={styles.styles.itemContainer} >
+              <TouchableOpacity style={styles.styles.itemContainer} onPress={() => setSelectedOption(item.id)} >
                 <CanvasDraw 
                             disabled
                             hideGrid
-                            saveData={item.image} 
+                            saveData={item.image}
                             immediateLoading
-                            style={{zoom:'15x%'}}
+                            style={{zoom:'15%'}}
                              />
                 <Text style={styles.styles.textDark}>{item.name}</Text>
               </TouchableOpacity>
