@@ -8,6 +8,7 @@ import Canvas from 'react-native-canvas';
 import tslogo from './assets/TwangStudios.png';
 import tblight from './assets/TheBaggerLight.png';
 import tbdark from './assets/TheBaggerDark.png';
+import * as uuid from 'uuid';
 
 
 
@@ -98,7 +99,7 @@ export default function App() {
         <View style={{alignItems:'flex-end'}}>
           <Image source={{uri:tslogo}} style={styles.tslogo} />
         </View>
-
+        <DrawModal id={selectedOption} onSave={onSave} />
       </View>
     </SafeAreaView>
   );
