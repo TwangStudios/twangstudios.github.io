@@ -105,7 +105,7 @@ export default function App() {
                             hideGrid
                             saveData={item.image}
                             immediateLoading
-                            style={{zoom:'15x%'}}
+                            style={{zoom:'15%'}}
                              />
                 <Text style={styles.styles.textDark}>{item.name}</Text>
               </TouchableOpacity>
