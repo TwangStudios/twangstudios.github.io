@@ -72,7 +72,7 @@ export default function App() {
     
     setItems(getItems);
     setSelectedOption(id);
-    addItemToChar(id, null);
+    // addItemToChar(id, null);
   }
   
   const onSave = () => {
