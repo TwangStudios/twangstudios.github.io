@@ -11,7 +11,17 @@ import tbdark from './assets/TheBaggerDark.png';
 import * as uuid from 'uuid';
 import * as styles from './styles' ;
 
-
+const addItemToChar = (id: string, char: string|null) => {
+  const charName = char ? char : 'NOONE';
+  if(!Object.keys(localStorage).includes(char ? char : 'NOONE')){
+    localStorage.setItem(charName, JSON.stringify({items:[]}))
+  }
+  const {items} = JSON.parse(localStorage.getItem(charName)!)
+  
+  items.push(id)
+  localStorage.setItem(charName, items)
+  return;
+}
 
 const getItems:()=>{id: string, name: string, image: string|undefined}[] = () => {
   var archive = [],
@@ -27,7 +37,7 @@ const getItems:()=>{id: string, name: string, image: string|undefined}[] = () =>
     archive.push({
       id: key,
       name: parsed.name, 
-      image: parsed.image
+      image: parsed.image,
   });
   }
   
@@ -61,7 +71,8 @@ export default function App() {
     }))
     
     setItems(getItems);
-    setSelectedOption(id)
+    setSelectedOption(id);
+    addItemToChar(id, null);
   }
   
   const onSave = () => {
@@ -86,12 +97,13 @@ export default function App() {
         </View>
         <ScrollView>
           {items.map((item) => {
+            console.log(item)
             return (
               <TouchableOpacity style={styles.styles.itemContainer} onPress={() => setSelectedOption(item.id)} >
                 <CanvasDraw 
                             disabled
                             hideGrid
-                            saveData={item.image} 
+                            saveData={item.image}
                             immediateLoading
                             style={{zoom:'15x%'}}
                              />
