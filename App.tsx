@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, SafeAreaView} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, SafeAreaView, RefreshControlBase} from 'react-native';
 import React, { useState } from 'react';
 import DrawModal from './drawModal/drawModal';
 import Select from 'react-select';
@@ -8,6 +8,7 @@ import Canvas from 'react-native-canvas';
 import tslogo from './assets/TwangStudios.png';
 import tblight from './assets/TheBaggerLight.png';
 import tbdark from './assets/TheBaggerDark.png';
+import wizard from './assets/lilwizard.png';
 import * as uuid from 'uuid';
 import * as styles from './styles' ;
 
@@ -52,7 +53,7 @@ const getItems:()=>{id: string, name: string, image: string|undefined}[] = () =>
     }))
     archive = getItems();
   }
-  return archive;
+  return archive.sort((a,b) => (a.name > b.name) ? 1 : -1);
 }
 
 export default function App() {
@@ -62,7 +63,7 @@ export default function App() {
   const makeNewItem = () => {
     const id = uuid.v4()
     localStorage.setItem(id, JSON.stringify({
-      name: "New Item",
+      name: "",
       isBag: false,
       image: undefined,
       description: "",
@@ -73,10 +74,12 @@ export default function App() {
     setItems(getItems);
     setSelectedOption(id);
     // addItemToChar(id, null);
+    window.location.reload()
   }
   
   const onSave = () => {
     setItems(getItems());
+    window.location.reload()
   }
 
   return ( 
@@ -84,17 +87,17 @@ export default function App() {
       <View style={styles.styles.containerMain}>
         <View style={{flexDirection:'row'}}>
           <Image source={{uri:tblight}} style={styles.styles.tblogo} />
-            
-            <Text style={styles.styles.textLight}> The TTRPG Party Inventory Manager</Text>
+          <Image source={{uri:wizard}} style={styles.styles.wizard} />
+            <View style={{flexDirection:'column', justifyContent:'center'}}>
+            <TouchableOpacity style={styles.styles.buttons}>
+              <Text style={styles.styles.textDark} onPress={makeNewItem}>New Item</Text>
+            </TouchableOpacity>
+            {/*<TouchableOpacity style={styles.styles.buttons}>
+              <Text style={styles.styles.textDark}>New Character</Text>
+            </TouchableOpacity>*/}
+          </View>
         </View>
-        <View style={{flexDirection:'row', }}>
-          <TouchableOpacity style={styles.styles.buttons}>
-            <Text style={styles.styles.textDark} onPress={makeNewItem}>New Item</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.styles.buttons}>
-            <Text style={styles.styles.textDark}>New Character</Text>
-          </TouchableOpacity>
-        </View>
+        
         <ScrollView>
           {items.map((item) => {
             console.log(item)

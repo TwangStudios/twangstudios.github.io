@@ -67,6 +67,11 @@ export const styles = StyleSheet.create({
     width: 300,
     padding: 5,
   },
+  wizard:{
+    height: 250,
+    width: 300,
+    alignSelf:'flex-end',
+  },
   contentEditor: {
     flexDirection: 'column',
   },
