@@ -13,47 +13,53 @@ import * as styles from './styles' ;
 
 
 
-const getItems:()=>{id: string, name: string, image: string}[] = () => {
+const getItems:()=>{id: string, name: string, image: string|undefined}[] = () => {
   var archive = [],
-      keys = Object.keys(localStorage),
-      i = 0, key;
-
+  keys = Object.keys(localStorage),
+  i = 0, key;
+  
   for (; key = keys[i]; i++) {
-        archive.push({id: key, 
-                      name: JSON.parse(localStorage.getItem(key)!).name, 
-                      image: JSON.parse(localStorage.getItem(key)!).image
-                    });
+    const stored = localStorage.getItem(key)
+    if(!stored) {
+      console.error('item {} could not be found in local storage', key);
     }
-
+    const parsed = JSON.parse(stored!);
+    archive.push({
+      id: key,
+      name: parsed.name, 
+      image: parsed.image
+  });
+  }
+  
   if(archive.length == 0){
     localStorage.setItem(uuid.v4(), JSON.stringify({
       name: "New Item",
       isBag: false,
-      image: "",
+      image: undefined,
       description: "",
       weight: 0,
       cost: 0,
     }))
     archive = getItems();
   }
-    return archive;
+  return archive;
 }
 
 export default function App() {
   const [items, setItems] = useState(getItems())
-  const [selectedOption, setSelectedOption] = useState<string>(items.at(0)!.name);
+  const [selectedOption, setSelectedOption] = useState<string>(items.at(0)!.id);
   
   const makeNewItem = () => {
     const id = uuid.v4()
     localStorage.setItem(id, JSON.stringify({
       name: "New Item",
       isBag: false,
-      image: "",
+      image: undefined,
       description: "",
       weight: 0,
       cost: 0,
     }))
-
+    
     setItems(getItems);
     setSelectedOption(id)
   }
@@ -81,7 +87,7 @@ export default function App() {
         <ScrollView>
           {items.map((item) => {
             return (
-              <TouchableOpacity style={styles.styles.itemContainer} >
+              <TouchableOpacity style={styles.styles.itemContainer} onPress={() => setSelectedOption(item.id)} >
                 <CanvasDraw 
                             disabled
                             hideGrid

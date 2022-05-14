@@ -35,7 +35,11 @@ export default function DrawModal({id, onSave}: ItemId & SaveAction) {
         if(!canvas.current) {
             return;
         }
-        canvas.current.loadSaveData(parsed.image || "", true);
+        if(parsed.image){
+            canvas.current.loadSaveData(parsed.image, true);
+        } else {
+            canvas.current.clear();
+        }
     }, [id])
 
     function save() {
