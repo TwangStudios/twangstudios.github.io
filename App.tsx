@@ -5,34 +5,51 @@ import DrawModal from './drawModal/drawModal';
 import Select from 'react-select';
 import * as uuid from 'uuid';
 
+const getItems:()=>{id: string, name: string}[] = () => {
+
+  var archive = [],
+      keys = Object.keys(localStorage),
+      i = 0, key;
+
+  for (; key = keys[i]; i++) {
+      archive.push({id: key, name: JSON.parse(localStorage.getItem(key)!).name});
+  }
+
+  if(archive.length == 0){
+    localStorage.setItem(uuid.v4(), JSON.stringify({
+      name: "New Item",
+      isBag: false,
+      image: "",
+      description: "",
+      weight: 0,
+      cost: 0,
+    }))
+    archive = getItems();
+  }
+
+  return archive;
+}
+
 export default function App() {
   const [items, setItems] = useState(getItems())
-  const [selectedOption, setSelectedOption] = useState<string>(items.at(0)?.label);
+  const [selectedOption, setSelectedOption] = useState<string>(items.at(0)!.name);
 
+  
+  const makeNewItem = () => {
+    const id = uuid.v4()
+    localStorage.setItem(id, JSON.stringify({
+      name: "New Item",
+      isBag: false,
+      image: "",
+      description: "",
+      weight: 0,
+      cost: 0,
+    }))
 
-  function getItems() {
-
-    var archive = [],
-        keys = Object.keys(localStorage),
-        i = 0, key;
-
-    for (; key = keys[i]; i++) {
-        archive.push({id: key, name: JSON.parse(localStorage.getItem(key)!).name});
-    }
-
-    if(archive.length == 0){
-      localStorage.setItem(uuid.v4(), JSON.stringify({
-        name: "New Item",
-        isBag: false,
-        image: "",
-        description: "",
-        weight: 0,
-        cost: 0,
-      }))
-    }
-
-    return archive;
-}
+    setItems(getItems);
+    setSelectedOption(id)
+  }
+  
   const onSave = () => {
     setItems(getItems());
   }
@@ -43,7 +60,7 @@ export default function App() {
         <Text style={styles.textLight}>ZingBong</Text>
         <View style={{flexDirection:'row', }}>
           <TouchableOpacity style={styles.buttons}>
-            <Text style={styles.textDark}>New Item</Text>
+            <Text style={styles.textDark} onPress={makeNewItem}>New Item</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttons}>
             <Text style={styles.textDark}>New Character</Text>
@@ -61,10 +78,12 @@ export default function App() {
         </ScrollView>
         
 
-        <DrawModal id={selectedOption} onSave={onSave} />
       </View>
-      <View style={styles.backgroundEditItem} />
-    </View>
+      <View style={styles.backgroundEditItem} >
+                         <DrawModal id={selectedOption} onSave={onSave} />
+                          </View>
+/>
+</View>
   );
 }
 
