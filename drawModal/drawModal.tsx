@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactModal from "react-modal";
 import './drawModal';
 import CanvasDraw from "react-canvas-draw";
-import { StyleSheet, View } from "react-native"
+import { Button, StyleSheet, View } from "react-native"
 import { TextInput } from "react-native";
 import * as styles from '../styles' ;
+import { registerRootComponent } from "expo";
 
 ReactModal.setAppElement('body');
 
@@ -40,6 +41,7 @@ export default function DrawModal({id, onSave}: ItemId & SaveAction) {
         } else {
             canvas.current.clear();
         }
+
     }, [id])
 
     function save() {
@@ -53,13 +55,20 @@ export default function DrawModal({id, onSave}: ItemId & SaveAction) {
         }))
         return onSave();
     }
+    const onDelete = () => {
+        localStorage.removeItem(id);
+        window.location.reload();
+    };
 
     return (
         <View style={styles.styles.contentEditor}>
             <View style={{marginVertical:2}}>
-                <CanvasDraw ref={canvas} 
-                            onChange={(canvas) => setImage(canvas.getSaveData)} />
+                <CanvasDraw ref={canvas }
+                            onChange={(canvas) => setImage(canvas.getSaveData)} 
+                            lazyRadius='0'
+                            style={{}}/>
             </View>
+            <Button title="Undo" onPress={()=> {this.saveableCanvas.undo()}}></Button>
             <View style={styles.styles.textInputContainerMed}>
                 <TextInput value={name} 
                             onChangeText={setName} 
@@ -93,12 +102,15 @@ export default function DrawModal({id, onSave}: ItemId & SaveAction) {
                 <input type="checkbox" checked={isBag} onChange={setIsBag} />
                 Is bag?
             </label>
-            <button
-                onClick={save}
+            <Button
+                onPress={save}
                 disabled={!name}
-            >
-                Save
-            </button>
+                title="SAVE"
+           />
+           <Button
+                onPress={()=>onDelete()}
+                title="Delete item"
+            />
         </View>
     )
 }
